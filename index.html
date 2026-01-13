@@ -43,12 +43,14 @@
       background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".16"/></svg>');
       mix-blend-mode:overlay;
       opacity:.22;
-      z-index:0;
+      z-index:-1;
     }
 
     /* header */
     header{
-      position:sticky; top:0; z-index:100;
+      position:sticky; top:0; z-index:1000;
+      pointer-events:auto;
+      isolation:isolate;
       background:rgba(7,9,15,.72);
       backdrop-filter: blur(14px);
       border-bottom:1px solid var(--line);
@@ -84,7 +86,7 @@
     }
 
     /* single-button language toggle: shows EN/DE, highlights active */
-    .lang-toggle{gap:8px; padding:11px 16px;pointer-events:auto;}
+    .lang-toggle{gap:8px; padding:11px 16px;pointer-events:auto;cursor:pointer;touch-action:manipulation;position:relative;z-index:2000;}
     .lang-toggle .lg{font-weight:900; letter-spacing:.06em; opacity:.55;}
     .lang-toggle .lg.active{opacity:1;}
     .lang-toggle .sep{width:1px;height:18px;background:var(--line2);opacity:.7;}
@@ -227,7 +229,7 @@
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
             <a class="btn primary" href="#projects" id="heroBtnProjects">View Projects</a>
             <a class="btn primary" href="#skills" id="heroBtnSkills">See Skills</a>
-            <a class="btn primary" href="/assets/Gabriel_Popa_CV.pdf" target="_blank" rel="noopener" id="heroBtnCV">Download CV (PDF)</a>
+            <a class="btn primary" href="./assets/Gabriel_Popa_CV.pdf" target="_blank" rel="noopener" id="heroBtnCV">Download CV (PDF)</a>
           </div>
 
           <div class="marquee" aria-label="Tech stack marquee">
@@ -589,7 +591,6 @@
     // reveal on scroll
     const els = document.querySelectorAll('.reveal');
 
-    // If IntersectionObserver isn't available, just show everything.
     if (!('IntersectionObserver' in window)){
       els.forEach(el => el.classList.add('visible'));
     } else {
@@ -599,7 +600,7 @@
       els.forEach(el => io.observe(el));
     }
 
-    // Always make hero visible immediately (prevents blank page on edge cases)
+    // Always make hero visible immediately
     requestAnimationFrame(() => {
       document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
     });
@@ -999,15 +1000,15 @@
 
       // renewal notes
       const sa = document.getElementById('certAzureSA'); if (sa && dict.certAzureSA) sa.textContent = dict.certAzureSA;
-      const de = document.getElementById('certAzureDE'); if (de && dict.certAzureDE) de.textContent = dict.certAzureDE;
+      const deEl = document.getElementById('certAzureDE'); if (deEl && dict.certAzureDE) deEl.textContent = dict.certAzureDE;
 
       localStorage.setItem('lang', lang);
 
-      const enEl = langToggle?.querySelector('[data-k="en"]');
-      const deEl = langToggle?.querySelector('[data-k="de"]');
-      if (enEl && deEl){
-        enEl.classList.toggle('active', lang === 'en');
-        deEl.classList.toggle('active', lang === 'de');
+      const enChip = langToggle?.querySelector('[data-k="en"]');
+      const deChip = langToggle?.querySelector('[data-k="de"]');
+      if (enChip && deChip){
+        enChip.classList.toggle('active', lang === 'en');
+        deChip.classList.toggle('active', lang === 'de');
       }
     }
 
@@ -1023,10 +1024,9 @@
       console.log('[OK] i18n self-test passed');
     }
 
-    const saved = localStorage.getItem('lang');
-
     try { runSelfTests(); } catch (e) { console.error(e); }
 
+    const saved = localStorage.getItem('lang');
     const initialLang = (saved === 'de') ? 'de' : 'en';
     applyLang(initialLang);
 
@@ -1128,12 +1128,17 @@
       typeHeroTitle(initialLang);
     }
 
+    // --- Wire up the language toggle safely ---
     if (langToggle){
-      langToggle.addEventListener('click', () => {
+      let lastToggleAt = 0;
+      const toggleLang = () => {
+        const now = Date.now();
+        // Guard against double-firing (pointer event + click)
+        if (now - lastToggleAt < 250) return;
+        lastToggleAt = now;
+
         const current = (localStorage.getItem('lang') === 'de') ? 'de' : 'en';
         const next = (current === 'de') ? 'en' : 'de';
-
-        // Apply immediately
         applyLang(next);
 
         // If the hero typewriter is still running (first load), ensure the headline swaps too.
@@ -1141,8 +1146,22 @@
         if (h1 && sessionStorage.getItem('heroTyped') !== '1'){
           h1.innerHTML = (t[next] || t.en).heroTitle;
         }
+      };
+
+      // Use a single pointer event for touch/mouse; keep click for keyboard fallback.
+      langToggle.addEventListener('pointerup', (e) => {
+        // Avoid stray drags / non-primary pointers
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        toggleLang();
+      });
+      langToggle.addEventListener('click', toggleLang);
+      langToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          toggleLang();
+        }
       });
     }
-</script>
+  </script>
 </body>
 </html>
