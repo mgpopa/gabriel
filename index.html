@@ -55,8 +55,8 @@
       backdrop-filter: blur(14px);
       border-bottom:1px solid var(--line);
     }
-    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;position:relative;z-index:101}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;position:relative;z-index:101;pointer-events:auto}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px;flex:0 0 auto;pointer-events:auto}
     .brand-mark{
       width:34px;height:34px;border-radius:12px;
       border:1px solid var(--line2);
@@ -64,10 +64,11 @@
       display:grid;place-items:center;
       font-size:.9rem;
     }
-    nav{display:flex;align-items:center;gap:18px}
+    nav{display:flex;align-items:center;gap:18px;pointer-events:auto}
     nav a{color:var(--muted);font-weight:600;font-size:.95rem;padding:8px 10px;border-radius:12px}
     nav a:hover{color:var(--text);background:var(--panel2);border:1px solid var(--line)}
-    .cta{display:flex;gap:10px;align-items:center;position:relative;z-index:102}
+    .cta{display:flex;gap:10px;align-items:center;position:relative;z-index:9999;pointer-events:auto}
+    .cta *{pointer-events:auto}
 
     /* buttons */
     .btn{
@@ -590,7 +591,6 @@
 
     // reveal on scroll
     const els = document.querySelectorAll('.reveal');
-
     if (!('IntersectionObserver' in window)){
       els.forEach(el => el.classList.add('visible'));
     } else {
@@ -1128,13 +1128,12 @@
       typeHeroTitle(initialLang);
     }
 
-    // --- Wire up the language toggle safely ---
+    // --- Wire up the language toggle (GitHub Pages safe) ---
     if (langToggle){
       let lastToggleAt = 0;
       const toggleLang = () => {
         const now = Date.now();
-        // Guard against double-firing (pointer event + click)
-        if (now - lastToggleAt < 250) return;
+        if (now - lastToggleAt < 250) return; // guard against double-fire
         lastToggleAt = now;
 
         const current = (localStorage.getItem('lang') === 'de') ? 'de' : 'en';
@@ -1148,13 +1147,11 @@
         }
       };
 
-      // Use a single pointer event for touch/mouse; keep click for keyboard fallback.
-      langToggle.addEventListener('pointerup', (e) => {
-        // Avoid stray drags / non-primary pointers
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
+      langToggle.addEventListener('click', (e) => {
+        e.preventDefault();
         toggleLang();
       });
-      langToggle.addEventListener('click', toggleLang);
+      langToggle.addEventListener('touchstart', () => toggleLang(), {passive:true});
       langToggle.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' '){
           e.preventDefault();
