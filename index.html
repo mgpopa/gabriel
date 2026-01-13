@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gabriel Popa - Data Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+  <style>
+    /* Palantir-esque: stark, editorial, grid + glow accents (inspired, not copied) */
+    :root{
+      --bg:#07090f;
+      --panel:rgba(255,255,255,.03);
+      --panel2:rgba(255,255,255,.06);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.16);
+      --accent:#8b5cf6;
+      --accent2:#22c55e;
+      --radius:18px;
+      --container:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(900px 500px at 70% -10%, rgba(139,92,246,.18), transparent 60%),
+        radial-gradient(900px 500px at 20% 0%, rgba(34,197,94,.10), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 22%),
+        var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--container),calc(100% - 44px));margin:0 auto}
+
+    /* subtle grain */
+    .grain{
+      pointer-events:none;
+      position:fixed; inset:0;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".16"/></svg>');
+      mix-blend-mode:overlay;
+      opacity:.22;
+      z-index:1;
+    }
+
+    /* header */
+    header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(7,9,15,.72);
+      backdrop-filter: blur(14px);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .brand-mark{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid var(--line2);
+      background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,197,94,.12));
+      display:grid;place-items:center;
+      font-size:.9rem;
+    }
+    nav{display:flex;align-items:center;gap:18px}
+    nav a{color:var(--muted);font-weight:600;font-size:.95rem;padding:8px 10px;border-radius:12px}
+    nav a:hover{color:var(--text);background:var(--panel2);border:1px solid var(--line)}
+    .cta{display:flex;gap:10px;align-items:center}
+
+    /* buttons */
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line2);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      font-weight:700;
+    }
+    .btn:hover{background:rgba(255,255,255,.06)}
+    .btn.primary{
+      border-color:rgba(139,92,246,.45);
+      background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,197,94,.10));
+    }
+
+    /* single-button language toggle: shows EN/DE, highlights active */
+    .lang-toggle{gap:8px; padding:11px 16px;}
+    .lang-toggle .lg{font-weight:900; letter-spacing:.06em; opacity:.55;}
+    .lang-toggle .lg.active{opacity:1;}
+    .lang-toggle .sep{width:1px;height:18px;background:var(--line2);opacity:.7;}
+
+    /* layout primitives */
+    .section{position:relative; padding:78px 0}
+    .section + .section{border-top:1px solid var(--line)}
+    .eyebrow{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:.78rem;
+      margin:0 0 12px;
+    }
+
+    /* big hero */
+    .hero{padding:86px 0 72px}
+    .hero-grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:start}
+    h1{
+      font-size:clamp(2.2rem, 4.2vw, 4.2rem);
+      line-height:1.03;
+      margin:0 0 16px;
+      letter-spacing:-.03em;
+    }
+    @keyframes blink{50%{opacity:0}}
+    .caret{display:inline-block;margin-left:2px;width:10px;color:rgba(255,255,255,.75);animation:blink 1s step-end infinite}
+    .lead{color:var(--muted);font-size:1.06rem;line-height:1.7;max-width:720px;margin:0 0 18px}
+    .gradient{background:linear-gradient(135deg, var(--accent), var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+    /* Palantir-ish grid backdrop */
+    .gridlines{
+      position:absolute; inset:-1px 0 auto 0;
+      height:520px;
+      background:
+        linear-gradient(to right, transparent 0, transparent 6%, rgba(255,255,255,.06) 6%, transparent 6.2%) 0 0/ 220px 100%,
+        linear-gradient(to bottom, rgba(255,255,255,.08), transparent 40%) 0 0/100% 100%;
+      mask-image: radial-gradient(70% 70% at 50% 25%, #000 55%, transparent 100%);
+      opacity:.75;
+      pointer-events:none;
+    }
+
+    /* info card */
+    .panel{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));padding:18px;}
+
+    /* cards grid */
+    .cards{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:22px}
+    .card{grid-column:span 6;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:18px}
+    .card h3{margin:0 0 8px;font-size:1.05rem}
+    .card p{margin:0;color:var(--muted);line-height:1.65}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .tags span{font-size:.82rem;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02)}
+
+    /* project cards */
+    .project{grid-column:span 12;background:linear-gradient(135deg, rgba(139,92,246,.10), rgba(34,197,94,.06));}
+    .project-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .badge{font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.8);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+    ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+    li{margin:8px 0;overflow-wrap:anywhere;word-break:break-word}
+
+    /* certifications */
+    .cert-item{display:grid;grid-template-columns:140px 1fr;gap:18px;padding:14px 0}
+    .cert-item + .cert-item{border-top:1px solid var(--line)}
+    .cert-year{color:var(--muted);font-weight:700}
+    .cert-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+    .cert-title{font-weight:800}
+    .cert-verify{color:var(--muted);font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.18)}
+    .cert-verify:hover{color:var(--text)}
+    .cert-meta{color:var(--muted);margin-top:6px;font-size:.92rem}
+
+    /* marquee (finite end, infinite loop via reset) */
+    .marquee{border:1px solid var(--line);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.02);padding:10px 0;margin-top:18px;position:relative;width: min(720px, 100%);cursor:grab;}
+    .marquee.dragging{cursor:grabbing;}
+    .marquee, .marquee *{user-select:none;}
+    .track{display:flex;gap:28px;align-items:center;width:max-content;padding:0 18px;will-change: transform;}
+    .spacer{display:inline-block; width:180px;}
+    .pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-weight:700;font-size:.9rem;background:rgba(255,255,255,.02);}
+
+    footer{padding:34px 0;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+
+    /* responsive */
+    @media (max-width: 920px){
+      .card{grid-column:span 12}
+      nav{display:none}
+      .cert-item{grid-template-columns:1fr;gap:8px}
+      .cert-year{font-size:.9rem}
+    }
+
+    /* reveal */
+    .reveal{opacity:0; transform: translateY(10px); transition: opacity .7s ease, transform .7s ease}
+    .reveal.visible{opacity:1; transform: translateY(0)}
+
+    /* top accent line */
+    .scanline{position:absolute; left:0; right:0; top:0; height:2px;background: linear-gradient(90deg, transparent, rgba(139,92,246,.9), rgba(34,197,94,.7), transparent);opacity:.65;filter: blur(.2px);}
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header>
+    <div class="scanline" aria-hidden="true"></div>
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Go to top">
+        <span class="brand-mark" aria-hidden="true">GP</span>
+        <span>Gabriel Popa</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#about" id="navAbout">About</a>
+        <a href="#skills" id="navSkills">Skills</a>
+        <a href="#projects" id="navProjects">Projects</a>
+        <a href="#certifications" id="navCerts">Certifications</a>
+      </nav>
+      <div class="cta">
+        <button class="btn primary lang-toggle" id="langToggle" type="button" aria-label="Switch language">
+          <span class="lg" data-k="en">EN</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span class="lg" data-k="de">DE</span>
+        </button>
+        <a class="btn primary" href="#contact" id="hdrContact">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section">
+      <div class="gridlines" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="reveal">
+          <p class="eyebrow" id="heroEyebrow">Data Engineer • Zurich</p>
+          <h1 id="heroTitle">
+            Building <span class="gradient">production-grade</span><br/>
+            data platforms with clarity &amp; speed.
+          </h1>
+          <p class="lead" id="heroLead">
+            I design reliable pipelines, data models, and platform components with a focus on automation, observability,
+            and secure delivery.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+            <a class="btn primary" href="#projects" id="heroBtnProjects">View Projects</a>
+            <a class="btn primary" href="#skills" id="heroBtnSkills">See Skills</a>
+            <a class="btn primary" href="/assets/Gabriel_Popa_CV.pdf" target="_blank" rel="noopener" id="heroBtnCV">Download CV (PDF)</a>
+          </div>
+
+          <div class="marquee" aria-label="Tech stack marquee">
+            <div class="track" id="track">
+              <span class="pill" data-pill="foundry">Palantir Foundry</span>
+              <span class="pill" data-pill="aip">Palantir AIP</span>
+              <span class="pill" data-pill="gotham">Palantir Gotham</span>
+              <span class="pill" data-pill="azure">Microsoft Azure</span>
+              <span class="pill" data-pill="ts">TypeScript</span>
+              <span class="pill" data-pill="databricks">Databricks</span>
+              <span class="pill" data-pill="pyspark">PySpark</span>
+              <span class="pill" data-pill="polars">Polars</span>
+              <span class="pill" data-pill="cicd">CI/CD</span>
+              <span class="pill" data-pill="dq">Data Quality</span>
+              <span class="pill" data-pill="obs">Observability</span>
+              <span class="pill" data-pill="sql">SQL</span>
+              <span class="pill" data-pill="snowflake">Snowflake</span>
+              <span class="pill" data-pill="dbt">dbt</span>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal" style="margin-top:32px">
+          <div class="panel">
+            <p class="eyebrow" id="panelBadge">At a glance</p>
+            <h3 style="margin:0 0 10px" id="panelTitle">End-to-end product engineering</h3>
+            <p class="lead" style="max-width:none" id="panelLead">
+              I operate as an all‑rounder across the full product lifecycle - from idea generation and problem discovery to design, prototyping, and production delivery.
+              I'm a hands-on engineer who translates business intent into robust, scalable systems.
+            </p>
+            <ul style="margin:10px 0 0;padding-left:18px;color:var(--muted)">
+              <li id="panelLi1">Identify the true constraint limiting a partner's mission</li>
+              <li id="panelLi2">Decompose complex problems into clear workflows and decisions</li>
+              <li id="panelLi3">Align business stakeholders around a shared solution direction</li>
+              <li id="panelLi4">Solve backwards from real user workflows</li>
+              <li id="panelLi5">Build and ship the software that move the organisation forward</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container reveal">
+        <p class="eyebrow" id="aboutEyebrow">About</p>
+        <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="aboutTitle">Engineering-first, recruiter-friendly</h2>
+        <p class="lead" style="max-width:900px" id="aboutBody">
+          I am a Senior Data Engineer with over nine years of experience designing and operating reliable, production-grade data platforms. I focus on turning complex, real‑world inputs into trusted datasets and systems that scale.
+          I work at the intersection of engineering and strategy, combining strong technical foundations with a pragmatic business mindset to deliver measurable, high‑impact outcomes.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="skills">
+      <div class="container">
+        <div class="reveal">
+          <p class="eyebrow" id="skillsEyebrow">Skills</p>
+          <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="skillsTitle">What I work with</h2>
+          <p class="lead" style="max-width:900px" id="skillsLead">Platforms, languages, and engineering practices used in production.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card reveal">
+            <h3 id="s1Title">Data Engineering</h3>
+            <p id="s1Body">Programming and query languages used to build data-intensive systems.</p>
+            <div class="tags">
+              <span>Python</span>
+              <span>Scala</span>
+              <span>PySpark</span>
+              <span>Polars</span>
+              <span>SQL</span>
+              <span>TypeScript</span>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <h3 id="s2Title">Platforms</h3>
+            <p id="s2Body">Enterprise data platforms used for analytics, planning, and decision support.</p>
+            <div class="tags">
+              <span>Palantir Foundry</span>
+              <span>Palantir AIP</span>
+              <span>Microsoft Azure</span>
+              <span>Databricks</span>
+              <span>Snowflake</span>
+              <span>dbt</span>
+              <span>Informatica PowerCenter</span>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <h3 id="s3Title">Engineering Practices</h3>
+            <p id="s3Body">Practices that keep systems reliable, testable, and maintainable in production.</p>
+            <div class="tags">
+              <span>CI/CD</span>
+              <span>Docker</span>
+              <span>Data Quality</span>
+              <span>Observability</span>
+              <span>pytest</span>
+              <span>Git</span>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <h3 id="s4Title">Analytics &amp; Visualisation</h3>
+            <p id="s4Body">Building insights, metrics, and decision-support views on top of data platforms.</p>
+            <div class="tags">
+              <span>Vega Charts</span>
+              <span>Executive Dashboards</span>
+              <span>Scenario Modelling</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="reveal">
+          <p class="eyebrow" id="projectsEyebrow">Projects</p>
+          <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="projectsTitle">Proof of capability</h2>
+          <p class="lead" style="max-width:900px" id="projectsLead">Swap these placeholders with your real repos or case studies.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="p0Title">Strategic Workforce Planning (SWP) Platform</h3>
+              <span class="badge" id="p0Badge">Enterprise</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="p0Body">
+              Designed, architected, and implemented a Strategic Workforce Planning platform to align workforce supply with long‑term business strategy through forecasting, skills analysis, scenario modelling, and talent optimisation.
+            </p>
+            <ul>
+              <li id="p0Li1">Partnered with Business Units and Group Functions to capture requirements and define a shared planning model</li>
+              <li id="p0Li2">Enabled scenario‑based planning and skills gap insights to support strategic talent decisions</li>
+              <li id="p0Li3">Delivered executive-ready analytics to improve planning consistency and decision speed across the organisation</li>
+            </ul>
+            <div class="tags">
+              <span>Palantir Foundry</span>
+              <span>Python</span>
+              <span>TypeScript</span>
+              <span>PySpark</span>
+              <span>Polars</span>
+              <span>Vega Charts</span>
+            </div>
+            <p class="cert-meta" style="margin-top:12px" id="p0Note">Proprietary internal platform - no public repository available.</p>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="pPCPTitle">People &amp; Cost Planning Platform</h3>
+              <span class="badge" id="pPCPBadge">Enterprise</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="pPCPBody">
+              Designed and implemented the People &amp; Cost Planning Platform, serving as the single source of truth for group-wide FTE planning and people cost projections.
+            </p>
+            <ul>
+              <li id="pPCPLi1">Acts as the Swiss Re hub for P6 / P9 projections and annual bottom-up FTE cost planning</li>
+              <li id="pPCPLi2">Implements strict access control and security markings for confidential salary data</li>
+              <li id="pPCPLi3">Improved accuracy, transparency, and execution of plans, enabling leaders to decide faster and take accountability</li>
+            </ul>
+            <div class="tags">
+              <span>Palantir Foundry</span>
+              <span>Python</span>
+              <span>TypeScript</span>
+              <span>PySpark</span>
+              <span>Polars</span>
+              <span>Vega Charts</span>
+            </div>
+            <p class="cert-meta" style="margin-top:12px" id="pPCPNote">Proprietary internal platform - no public repository available.</p>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="pXTitle">PII‑Safe Semantic Search for Insurance Claims</h3>
+              <span class="badge" id="pXBadge">Personal</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="pXBody">
+              A personal project exploring how to enable semantic search and RAG over sensitive insurance claims notes without storing personally identifiable information (PII) in the vector index.
+            </p>
+            <ul>
+              <li id="pXLi1">Unlocks semantic search on sensitive text while keeping PII out of vector stores</li>
+              <li id="pXLi2">Reduces compliance risk by separating masked embeddings from governed raw text</li>
+              <li id="pXLi3">Improves analyst productivity by enabling meaning‑based search instead of exact keywords</li>
+              <li id="pXLi4">De‑risks vendor exposure by keeping vectors local and reusing existing governed data stores</li>
+            </ul>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+              <a class="btn" href="https://github.com/mgpopa/pii-safe-claims-rag" target="_blank" rel="noopener" id="pXRepo">GitHub</a>
+              <a class="btn" href="https://medium.com/@gabriel.io/pii-safe-semantic-search-for-insurance-claims-a-practical-approach-b4d6373e0d8a" target="_blank" rel="noopener" id="pXArticle">Article</a>
+            </div>
+            <div class="tags">
+              <span>Python</span>
+              <span>RAG</span>
+              <span>Semantic Search</span>
+              <span>PII</span>
+              <span>LLMs</span>
+            </div>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="pITDWHTitle">ITDWH Decommissioning &amp; Cloud Migration</h3>
+              <span class="badge" id="pITDWHBadge">Enterprise</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="pITDWHBody">
+              Led the decommissioning of the legacy ITDWH platform and transition of private, public, and on‑prem consumption sources to Microsoft Azure and Palantir Foundry.
+            </p>
+            <ul>
+              <li id="pITDWHLi1">Migrated 200+ customer‑facing interfaces to Palantir Foundry, including value services and distribution logic</li>
+              <li id="pITDWHLi2">Transitioned diverse data sources (Oracle, Postgres, DB2 Mainframe, CSV, SharePoint, Pull‑printing) to Azure‑based consumption</li>
+              <li id="pITDWHLi3">Delivered an estimated cost saving of ~$120k per month through decommissioning and platform consolidation</li>
+              <li id="pITDWHLi4">Implemented health checks across Microsoft Azure and Palantir Foundry to ensure operational stability</li>
+            </ul>
+            <div class="tags">
+              <span>Microsoft Azure</span>
+              <span>Microsoft Fabric / Synapse</span>
+              <span>Palantir Foundry</span>
+              <span>Oracle</span>
+              <span>SQL Server</span>
+            </div>
+            <p class="cert-meta" style="margin-top:12px" id="pITDWHNote">Proprietary internal platform - no public repository available.</p>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="p1Title">Lakehouse Pipeline with Quality Gates</h3>
+              <span class="badge" id="p1Badge">Featured</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="p1Body">
+              Ingestion → transformations → curated marts with tests, freshness checks, and deploy-time validation.
+            </p>
+            <ul>
+              <li id="p1Li1">Contract checks block deploy on breaking schema or quality failures</li>
+              <li id="p1Li2">Latency and volume anomaly monitoring with actionable alerts</li>
+              <li id="p1Li3">Reproducible dev env with Docker + documented runbook</li>
+            </ul>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+              <a class="btn" href="#" id="p1Repo">Repo</a>
+              <a class="btn" href="#" id="p1Writeup">Write-up</a>
+            </div>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="p2Title">Airflow DAG Factory + Standards</h3>
+              <span class="badge" id="p2Badge">Ops</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="p2Body">
+              A reusable library that standardizes retries, SLAs, alerts, and docs across pipelines.
+            </p>
+            <ul>
+              <li id="p2Li1">One-line bootstrap for new pipelines</li>
+              <li id="p2Li2">Consistent metadata and logging for faster debugging</li>
+              <li id="p2Li3">Reduced on-call noise via tuned alert rules</li>
+            </ul>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+              <a class="btn" href="#" id="p2Repo">Repo</a>
+              <a class="btn" href="#" id="p2Docs">Docs</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="certifications">
+      <div class="container">
+        <div class="reveal">
+          <p class="eyebrow" id="certsEyebrow">Certifications</p>
+          <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="certsTitle">Learning timeline</h2>
+          <p class="lead" style="max-width:900px" id="certsLead">Chronological view, prioritising relevance and recency.</p>
+        </div>
+
+        <div style="margin-top:28px;max-width:900px" class="reveal">
+          <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Proofpoint Certified AI Data Security Specialist</div><a class="cert-verify" href="https://www.credly.com/badges/920fc6e8-4a2c-4064-a900-76b878df1c64/public_url" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Aware</div><a class="cert-verify" href="https://verify.skilljar.com/c/qsqymtssnuh7" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Application Developer Professional</div><a class="cert-verify" href="https://verify.skilljar.com/c/7umzdtziharh" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2024</div><div><div class="cert-title-row"><div class="cert-title">Microsoft Certified: Fabric Analytics Engineer Associate</div><a class="cert-verify" href="https://learn.microsoft.com/api/credentials/share/de-de/Gabriel-6596/7CEE8D6F7B2D4942?sharingId=30CD7BEF61A84C0B" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2024</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Data Engineer Professional</div><a class="cert-verify" href="https://verify.skilljar.com/c/rscj2fzo6cqa" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2021</div><div><div class="cert-title-row"><div class="cert-title">AWS Certified Data Analytics – Specialty</div><a class="cert-verify" href="https://www.credly.com/badges/75622042-25b0-4f0d-bd6a-b7ffb01edfaf" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2021–2026</div><div><div class="cert-title-row"><div class="cert-title">Microsoft Certified: Azure Solutions Architect Expert</div><a class="cert-verify" href="https://learn.microsoft.com/api/credentials/share/en-us/Gabriel-6596/AC4FD20C907CE110" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certAzureSA">Renewed annually through 2026</div></div></div>
+          <div class="cert-item"><div class="cert-year">2021</div><div><div class="cert-title-row"><div class="cert-title">Databricks Certified Associate Developer for Apache Spark 3.0</div><a class="cert-verify" href="https://credentials.databricks.com/191fc98b-cc20-4278-9cc7-ff5eaec596cf" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2020</div><div><div class="cert-title-row"><div class="cert-title">SnowPro Core Certification</div><a class="cert-verify" href="https://www.youracclaim.com/badges/2e14bd69-9776-4b16-a593-dcfef39fb3ff" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div></div></div>
+          <div class="cert-item"><div class="cert-year">2020–2025</div><div><div class="cert-title-row"><div class="cert-title">Microsoft Certified: Azure Data Engineer Associate</div><a class="cert-verify" href="https://learn.microsoft.com/api/credentials/share/en-us/Gabriel-6596/950B05D98F89C967" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certAzureDE">Renewed annually through 2025</div></div></div>
+          <p style="margin-top:18px;color:var(--muted);font-size:.9rem" id="certsFoot">Full list available on <a href="https://www.linkedin.com/in/p-gabriel" target="_blank" rel="noopener">LinkedIn</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="volunteering">
+      <div class="container">
+        <div class="reveal">
+          <p class="eyebrow" id="volEyebrow">Volunteering &amp; Community</p>
+          <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="volTitle">Giving back beyond work</h2>
+          <p class="lead" style="max-width:900px" id="volLead">Selected non‑technical volunteering activities in Switzerland and abroad.</p>
+        </div>
+
+        <div style="margin-top:28px;max-width:900px" class="reveal">
+          <div class="cert-item">
+            <div class="cert-year" id="vol2Year">2025</div>
+            <div>
+              <div class="cert-title" id="vol2Title">Foundation St. Jakob - Zürich</div>
+              <div class="cert-meta" id="vol2Body">Supported initiatives creating employment and training opportunities for people with disabilities across gastronomy, crafts, and commercial activities.</div>
+            </div>
+          </div>
+
+          <div class="cert-item">
+            <div class="cert-year" id="vol3Year">2024</div>
+            <div>
+              <div class="cert-title" id="vol3Title">CYBATHLON - ETH Zürich</div>
+              <div class="cert-meta" id="vol3Body">Volunteer contributor to CYBATHLON, a global initiative promoting assistive technologies and inclusion for people with disabilities.</div>
+            </div>
+          </div>
+
+          <div class="cert-item">
+            <div class="cert-year" id="vol4Year">2023</div>
+            <div>
+              <div class="cert-title" id="vol4Title">Bergwaldprojekt - Kanton Graubünden</div>
+              <div class="cert-meta" id="vol4Body">Participated in forest conservation work, including building hiking paths and installing protective measures for young trees against avalanches.</div>
+            </div>
+          </div>
+
+          <div class="cert-item">
+            <div class="cert-year" id="vol1Year">2015–Present</div>
+            <div>
+              <div class="cert-title" id="vol1Title">Rotaract Club Bucharest - Member &amp; Past President</div>
+              <div class="cert-meta" id="vol1Body">Active member of Rotaract, a global Rotary-sponsored service organisation. Served as Club President (2016–2017), leading initiatives focused on leadership development, community service, and international cooperation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="reveal">
+          <p class="eyebrow" id="contactEyebrow">Contact</p>
+          <h2 style="margin:0 0 10px;letter-spacing:-.02em" id="contactTitle">Let's talk</h2>
+          <p class="lead" style="max-width:900px" id="contactLead">Replace the email below with your real address when you're ready.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <a class="btn primary" href="you@example.com" id="contactEmail">Email</a>
+            <a class="btn" href="https://www.linkedin.com/in/p-gabriel" id="contactLinkedIn" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn" href="https://medium.com/@gabriel.io" target="_blank" rel="noopener">Medium</a>
+            <a class="btn" href="#" id="contactGitHub">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container" id="footerText">© 2026 Gabriel Popa - Portfolio Preview</div>
+    </footer>
+  </main>
+
+  <script>
+    // reveal on scroll
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      for (const e of entries) if (e.isIntersecting) e.target.classList.add('visible');
+    }, {threshold: 0.08});
+    els.forEach(el => io.observe(el));
+
+    // marquee: finite list, infinite loop with reset
+    const marquee = document.querySelector('.marquee');
+    const track = document.querySelector('.track');
+    let x = 0;
+    let speed = 0.4; // px per frame
+    let paused = false;
+
+    // drag-to-scroll state
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+    marquee.addEventListener('mouseenter', () => paused = true);
+    marquee.addEventListener('mouseleave', () => { if(!dragging) paused = false; });
+
+    marquee.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      dragging = true;
+      paused = true;
+      marquee.classList.add('dragging');
+      marquee.setPointerCapture?.(e.pointerId);
+      dragStartX = e.clientX;
+      dragStartOffset = x;
+      e.preventDefault();
+    });
+
+    marquee.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const end = track.scrollWidth - marquee.clientWidth;
+      if (end <= 0) return;
+      const dx = e.clientX - dragStartX;
+      const next = dragStartOffset + dx;
+      x = clamp(next, -end, 0);
+      track.style.transform = `translateX(${x}px)`;
+      e.preventDefault();
+    });
+
+    function stopDrag(e){
+      if (!dragging) return;
+      dragging = false;
+      marquee.classList.remove('dragging');
+      const r = marquee.getBoundingClientRect();
+      const inside = (e && 'clientX' in e)
+        ? (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom)
+        : false;
+      if (!inside) paused = false;
+    }
+
+    marquee.addEventListener('pointerup', stopDrag);
+    marquee.addEventListener('pointercancel', stopDrag);
+    marquee.addEventListener('pointerleave', (e) => { if (dragging) stopDrag(e); });
+
+    function animate(){
+      if(!paused){
+        const end = track.scrollWidth - marquee.clientWidth;
+        if (end > 0){
+          x -= speed;
+          if (Math.abs(x) >= end) x = 0;
+          track.style.transform = `translateX(${x}px)`;
+        } else {
+          track.style.transform = `translateX(0px)`;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // --- Language toggle (EN/DE) ---
+    const t = {
+      en: {
+        navAbout: 'About',
+        navSkills: 'Skills',
+        navProjects: 'Projects',
+        navCerts: 'Certifications',
+        hdrContact: 'Contact',
+
+        heroEyebrow: 'Data Engineer • Zurich',
+        heroTitle: 'Building <span class="gradient">production-grade</span><br/>data platforms with clarity &amp; speed.',
+        heroLead: 'I design reliable pipelines, data models, and platform components with a focus on automation, observability, and secure delivery.',
+        heroBtnProjects: 'View Projects',
+        heroBtnSkills: 'See Skills',
+        heroBtnCV: 'Download CV (PDF)',
+
+        pills: {
+          foundry: 'Palantir Foundry',
+          aip: 'Palantir AIP',
+          gotham: 'Palantir Gotham',
+          azure: 'Microsoft Azure',
+          ts: 'TypeScript',
+          databricks: 'Databricks',
+          pyspark: 'PySpark',
+          polars: 'Polars',
+          cicd: 'CI/CD',
+          dq: 'Data Quality',
+          obs: 'Observability',
+          sql: 'SQL',
+          snowflake: 'Snowflake',
+          dbt: 'dbt'
+        },
+
+        panelBadge: 'At a glance',
+        panelTitle: 'End-to-end product engineering',
+        panelLead: 'I operate as an all‑rounder across the full product lifecycle - from idea generation and problem discovery to design, prototyping, and production delivery. I'm a hands-on engineer who translates business intent into robust, scalable systems.',
+        panelLi1: 'Identify the true constraint limiting a partner's mission',
+        panelLi2: 'Decompose complex problems into clear workflows and decisions',
+        panelLi3: 'Align business stakeholders around a shared solution direction',
+        panelLi4: 'Solve backwards from real user workflows',
+        panelLi5: 'Build and ship the software that move the organisation forward',
+
+        aboutEyebrow: 'About',
+        aboutTitle: 'Engineering-first, recruiter-friendly',
+        aboutBody: 'I am a Senior Data Engineer with over nine years of experience designing and operating reliable, production-grade data platforms. I focus on turning complex, real‑world inputs into trusted datasets and systems that scale. I work at the intersection of engineering and strategy, combining strong technical foundations with a pragmatic business mindset to deliver measurable, high‑impact outcomes.',
+
+        skillsEyebrow: 'Skills',
+        skillsTitle: 'What I work with',
+        skillsLead: 'Platforms, languages, and engineering practices used in production.',
+        s1Title: 'Data Engineering',
+        s1Body: 'Programming and query languages used to build data-intensive systems.',
+        s2Title: 'Platforms',
+        s2Body: 'Enterprise data platforms used for analytics, planning, and decision support.',
+        s3Title: 'Engineering Practices',
+        s3Body: 'Practices that keep systems reliable, testable, and maintainable in production.',
+        s4Title: 'Analytics & Visualisation',
+        s4Body: 'Building insights, metrics, and decision-support views on top of data platforms.',
+
+        projectsEyebrow: 'Projects',
+        projectsTitle: 'Proof of capability',
+        projectsLead: 'Swap these placeholders with your real repos or case studies.',
+
+        p0Title: 'Strategic Workforce Planning (SWP) Platform',
+        p0Badge: 'Enterprise',
+        p0Body: 'Designed, architected, and implemented a Strategic Workforce Planning platform to align workforce supply with long‑term business strategy through forecasting, skills analysis, scenario modelling, and talent optimisation.',
+        p0Li1: 'Partnered with Business Units and Group Functions to capture requirements and define a shared planning model',
+        p0Li2: 'Enabled scenario‑based planning and skills gap insights to support strategic talent decisions',
+        p0Li3: 'Delivered executive-ready analytics to improve planning consistency and decision speed across the organisation',
+        p0Note: 'Proprietary internal platform - no public repository available.',
+
+        pPCPTitle: 'People & Cost Planning Platform',
+        pPCPBadge: 'Enterprise',
+        pPCPBody: 'Designed and implemented the People & Cost Planning Platform, serving as the single source of truth for group-wide FTE planning and people cost projections.',
+        pPCPLi1: 'Acts as the Swiss Re hub for P6 / P9 projections and annual bottom-up FTE cost planning',
+        pPCPLi2: 'Implements strict access control and security markings for confidential salary data',
+        pPCPLi3: 'Improved accuracy, transparency, and execution of plans, enabling leaders to decide faster and take accountability',
+        pPCPNote: 'Proprietary internal platform - no public repository available.',
+
+        pXTitle: 'PII‑Safe Semantic Search for Insurance Claims',
+        pXBadge: 'Personal',
+        pXBody: 'A personal project exploring how to enable semantic search and RAG over sensitive insurance claims notes without storing personally identifiable information (PII) in the vector index.',
+        pXLi1: 'Unlocks semantic search on sensitive text while keeping PII out of vector stores',
+        pXLi2: 'Reduces compliance risk by separating masked embeddings from governed raw text',
+        pXLi3: 'Improves analyst productivity by enabling meaning‑based search instead of exact keywords',
+        pXLi4: 'De‑risks vendor exposure by keeping vectors local and reusing existing governed data stores',
+        pXRepo: 'GitHub',
+        pXArticle: 'Article',
+
+        pITDWHTitle: 'ITDWH Decommissioning & Cloud Migration',
+        pITDWHBadge: 'Enterprise',
+        pITDWHBody: 'Led the decommissioning of the legacy ITDWH platform and transition of private, public, and on‑prem consumption sources to Microsoft Azure and Palantir Foundry.',
+        pITDWHLi1: 'Migrated 200+ customer‑facing interfaces to Palantir Foundry, including value services and distribution logic',
+        pITDWHLi2: 'Transitioned diverse data sources (Oracle, Postgres, DB2 Mainframe, CSV, SharePoint, Pull‑printing) to Azure‑based consumption',
+        pITDWHLi3: 'Delivered an estimated cost saving of ~$120k per month through decommissioning and platform consolidation',
+        pITDWHLi4: 'Implemented health checks across Microsoft Azure and Palantir Foundry to ensure operational stability',
+        pITDWHNote: 'Proprietary internal platform - no public repository available.',
+
+        p1Title: 'Lakehouse Pipeline with Quality Gates',
+        p1Badge: 'Featured',
+        p1Body: 'Ingestion → transformations → curated marts with tests, freshness checks, and deploy-time validation.',
+        p1Li1: 'Contract checks block deploy on breaking schema or quality failures',
+        p1Li2: 'Latency and volume anomaly monitoring with actionable alerts',
+        p1Li3: 'Reproducible dev env with Docker + documented runbook',
+        p1Repo: 'Repo',
+        p1Writeup: 'Write-up',
+
+        p2Title: 'Airflow DAG Factory + Standards',
+        p2Badge: 'Ops',
+        p2Body: 'A reusable library that standardizes retries, SLAs, alerts, and docs across pipelines.',
+        p2Li1: 'One-line bootstrap for new pipelines',
+        p2Li2: 'Consistent metadata and logging for faster debugging',
+        p2Li3: 'Reduced on-call noise via tuned alert rules',
+        p2Repo: 'Repo',
+        p2Docs: 'Docs',
+
+        certsEyebrow: 'Certifications',
+        certsTitle: 'Learning timeline',
+        certsLead: 'Chronological view, prioritising relevance and recency.',
+        verifyLabel: 'Verify',
+        certAzureSA: 'Renewed annually through 2026',
+        certAzureDE: 'Renewed annually through 2025',
+        certsFoot: 'Full list available on <a href="https://www.linkedin.com/in/p-gabriel" target="_blank" rel="noopener">LinkedIn</a>.',
+
+        contactEyebrow: 'Contact',
+        contactTitle: 'Let's talk',
+        contactLead: 'Replace the email below with your real address when you're ready.',
+        contactEmail: 'Email',
+        contactLinkedIn: 'LinkedIn',
+        contactGitHub: 'GitHub',
+
+        footerText: '© 2026 Gabriel Popa - Portfolio Preview',
+
+        volEyebrow: 'Volunteering & Community',
+        volTitle: 'Giving back beyond work',
+        volLead: 'Selected non-technical volunteering activities in Switzerland and abroad.',
+        vol1Title: 'Rotaract Club Bucharest - Member & Past President',
+        vol1Body: 'Active member of Rotaract, a global Rotary-sponsored service organisation. Served as Club President (2016–2017), leading initiatives focused on leadership development, community service, and international cooperation.',
+        vol2Title: 'Foundation St. Jakob - Zürich',
+        vol2Body: 'Supported initiatives creating employment and training opportunities for people with disabilities across gastronomy, crafts, and commercial activities.',
+        vol3Title: 'CYBATHLON - ETH Zürich',
+        vol3Body: 'Volunteer contributor to CYBATHLON, a global initiative promoting assistive technologies and inclusion for people with disabilities.',
+        vol4Title: 'Bergwaldprojekt - Canton Graubünden',
+        vol4Body: 'Participated in forest conservation work, including building hiking paths and installing protective measures for young trees against avalanches.'
+      },
+      de: {
+        navAbout: 'Über mich',
+        navSkills: 'Fähigkeiten',
+        navProjects: 'Projekte',
+        navCerts: 'Zertifizierungen',
+        hdrContact: 'Kontakt',
+
+        heroEyebrow: 'Data Engineer • Zürich',
+        heroTitle: 'Ich entwickle <span class="gradient">produktionsreife</span><br/>Datenplattformen – klar, robust und skalierbar.',
+        heroLead: 'Ich entwickle zuverlässige Pipelines, Datenmodelle und Plattform-Bausteine – mit Fokus auf Automatisierung, Observability und sichere Auslieferung.',
+        heroBtnProjects: 'Projekte ansehen',
+        heroBtnSkills: 'Skills ansehen',
+        heroBtnCV: 'Lebenslauf (PDF)',
+
+        pills: {
+          foundry: 'Palantir Foundry',
+          aip: 'Palantir AIP',
+          gotham: 'Palantir Gotham',
+          azure: 'Microsoft Azure',
+          ts: 'TypeScript',
+          databricks: 'Databricks',
+          pyspark: 'PySpark',
+          polars: 'Polars',
+          cicd: 'CI/CD',
+          dq: 'Datenqualität',
+          obs: 'Observability',
+          sql: 'SQL',
+          snowflake: 'Snowflake',
+          dbt: 'dbt'
+        },
+
+        panelBadge: 'Auf einen Blick',
+        panelTitle: 'End-to-End Produktentwicklung',
+        panelLead: 'Ich agiere als Allrounder über den gesamten Produktlebenszyklus hinweg – von Ideenfindung und Problemverständnis über Design und Prototyping bis hin zur produktiven Umsetzung. Ich bin ein hands-on Engineer, der Business-Ziele in robuste, skalierbare Systeme übersetzt.',
+        panelLi1: 'Die entscheidende Einschränkung identifizieren, die die Mission eines Partners limitiert',
+        panelLi2: 'Komplexe Probleme in klare Workflows und Entscheidungen zerlegen',
+        panelLi3: 'Business-Stakeholder auf eine gemeinsame Lösungsrichtung ausrichten',
+        panelLi4: 'Vom realen Nutzer-Workflow rückwärts denken und lösen',
+        panelLi5: 'Software entwickeln und liefern, die die Organisation messbar voranbringt',
+
+        aboutEyebrow: 'Über mich',
+        aboutTitle: 'Engineering-first, recruiterfreundlich',
+        aboutBody: 'Ich bin Senior Data Engineer mit über neun Jahren Erfahrung im Design, Aufbau und Betrieb robuster, produktionsreifer Datenplattformen. Mein Fokus liegt darauf, komplexe reale Daten in verlässliche, skalierbare Datensätze und Systeme zu überführen, die im Alltag tatsächlich genutzt werden. Ich arbeite an der Schnittstelle von Engineering und Strategie und verbinde fundiertes technisches Know-how mit einem pragmatischen Business-Verständnis, um nachhaltigen Mehrwert und messbare Ergebnisse zu erzielen.',
+
+        skillsEyebrow: 'Fähigkeiten',
+        skillsTitle: 'Womit ich arbeite',
+        skillsLead: 'Plattformen, Sprachen und Engineering-Praktiken für produktive Systeme.',
+        s1Title: 'Data Engineering',
+        s1Body: 'Programmier- und Abfragesprachen für datenintensive Systeme.',
+        s2Title: 'Plattformen',
+        s2Body: 'Enterprise-Plattformen für Analytics, Planung und Entscheidungsunterstützung.',
+        s3Title: 'Engineering-Praktiken',
+        s3Body: 'Praktiken für zuverlässige, testbare und wartbare Systeme in Produktion.',
+        s4Title: 'Analytics & Visualisierung',
+        s4Body: 'Insights, Kennzahlen und decision-support Views auf Datenplattformen.',
+
+        projectsEyebrow: 'Projekte',
+        projectsTitle: 'Nachweise aus der Praxis',
+        projectsLead: 'Ersetze die Platzhalter durch reale Repos oder Case Studies.',
+
+        p0Title: 'Strategische Workforce-Planungsplattform (SWP)',
+        p0Badge: 'Enterprise',
+        p0Body: 'Konzeption, Architektur und Implementierung einer Strategic-Workforce-Planning-Plattform zur langfristigen Ausrichtung von Personalbestand und Geschäftsstrategie mittels Prognosen, Skill-Analysen, Szenario-Modellierung und Talentoptimierung.',
+        p0Li1: 'Zusammenarbeit mit Business Units und Group Functions zur Aufnahme von Anforderungen und Definition eines gemeinsamen Planungsmodells',
+        p0Li2: 'Szenariobasierte Planung und Skill-Gap-Analysen als Grundlage für strategische Talententscheidungen',
+        p0Li3: 'Executive-taugliche Analysen zur Verbesserung von Konsistenz und Geschwindigkeit in der Planung über die Organisation hinweg',
+        p0Note: 'Unternehmensinterne Plattform - kein öffentliches Repository verfügbar.',
+
+        pPCPTitle: 'People- & Cost-Planning-Plattform',
+        pPCPBadge: 'Enterprise',
+        pPCPBody: 'Konzeption und Implementierung der People- & Cost-Planning-Plattform als zentrale Quelle für gruppenweite FTE-Planung und Personalkostenprojektionen.',
+        pPCPLi1: 'Zentrale Plattform für P6- / P9-Projektionen und jährliche Bottom-up-FTE-Kostenplanung',
+        pPCPLi2: 'Striktes Rollen- und Berechtigungskonzept für vertrauliche Gehaltsdaten mittels Security Markings',
+        pPCPLi3: 'Erhöhte Genauigkeit und Transparenz der Planung sowie schnellere Entscheidungsfindung und klare Verantwortlichkeiten',
+        pPCPNote: 'Unternehmensinterne Plattform - kein öffentliches Repository verfügbar.',
+
+        pXTitle: 'PII‑sichere semantische Suche für Versicherungsschäden',
+        pXBadge: 'Persönlich',
+        pXBody: 'Persönliches Projekt zur Ermöglichung semantischer Suche und RAG über sensible Schadennotizen, ohne personenbezogene Daten (PII) im Vektorindex zu speichern.',
+        pXLi1: 'Ermöglicht semantische Suche über sensible Texte ohne Speicherung von PII in Vektoren',
+        pXLi2: 'Reduziert Compliance‑Risiken durch Trennung von maskierten Embeddings und reguliertem Klartext',
+        pXLi3: 'Beschleunigt die Arbeit von Analysten durch bedeutungsbasierte Suche statt exakter Schlüsselwörter',
+        pXLi4: 'Minimiert Anbieterabhängigkeiten durch lokale Vektoren und Nutzung bestehender, regulierter Datenspeicher',
+        pXRepo: 'GitHub',
+        pXArticle: 'Artikel',
+
+        pITDWHTitle: 'ITDWH Decommissioning & Cloud Migration',
+        pITDWHBadge: 'Enterprise',
+        pITDWHBody: 'Decommissioning der Legacy-ITDWH-Plattform und Transition von Private-, Public- und On-Prem-Consumption-Quellen nach Microsoft Azure und Palantir Foundry.',
+        pITDWHLi1: 'Migration von 200+ kundennahen Interfaces nach Palantir Foundry inkl. Value Services und Distribution Logic',
+        pITDWHLi2: 'Transition heterogener Quellen (Oracle, Postgres, DB2 Mainframe, CSV, SharePoint, Pull‑printing) auf Azure-basierten Consumption',
+        pITDWHLi3: 'Geschätzte Kosteneinsparung von ~$120k pro Monat durch Decommissioning und Konsolidierung',
+        pITDWHLi4: 'Health Checks über Microsoft Azure und Palantir Foundry zur Sicherstellung der operativen Stabilität',
+        pITDWHNote: 'Unternehmensinterne Plattform - kein öffentliches Repository verfügbar.',
+
+        p1Title: 'Lakehouse-Pipeline mit Quality Gates',
+        p1Badge: 'Highlight',
+        p1Body: 'Ingestion → Transformationen → Data Marts mit Tests, Freshness-Checks und Deploy-Validierung.',
+        p1Li1: 'Contract-Checks blockieren Deploys bei Schema- oder Qualitätsproblemen',
+        p1Li2: 'Monitoring für Latenz und Volumen-Anomalien mit klaren Alerts',
+        p1Li3: 'Reproduzierbares Setup mit Docker + dokumentiertem Runbook',
+        p1Repo: 'Repo',
+        p1Writeup: 'Write-up',
+
+        p2Title: 'Airflow DAG Factory + Standards',
+        p2Badge: 'Ops',
+        p2Body: 'Wiederverwendbare Library für Retries, SLAs, Alerts und Doku über alle Pipelines hinweg.',
+        p2Li1: 'One-Liner Bootstrap für neue Pipelines',
+        p2Li2: 'Konsistente Metadaten und Logging für schnelleres Debugging',
+        p2Li3: 'Weniger On-Call-Noise durch getunte Alert-Regeln',
+        p2Repo: 'Repo',
+        p2Docs: 'Docs',
+
+        certsEyebrow: 'Zertifizierungen',
+        certsTitle: 'Lernverlauf',
+        certsLead: 'Chronologische Ansicht – Fokus auf Relevanz & Aktualität.',
+        verifyLabel: 'Nachweis',
+        certAzureSA: 'Jährlich erneuert bis 2026',
+        certAzureDE: 'Jährlich erneuert bis 2025',
+        certsFoot: 'Vollständige Liste auf <a href="https://www.linkedin.com/in/p-gabriel" target="_blank" rel="noopener">LinkedIn</a>.',
+
+        contactEyebrow: 'Kontakt',
+        contactTitle: 'Kontakt aufnehmen',
+        contactLead: 'Ersetze die E-Mail unten, sobald du deine echte Adresse eintragen möchtest.',
+        contactEmail: 'E-Mail',
+        contactLinkedIn: 'LinkedIn',
+        contactGitHub: 'GitHub',
+
+        footerText: '© 2026 Gabriel Popa - Portfolio (Vorschau)',
+
+        volEyebrow: 'Engagement & Ehrenamt',
+        volTitle: 'Engagement über den Beruf hinaus',
+        volLead: 'Ausgewählte ehrenamtliche Tätigkeiten in der Schweiz und im Ausland.',
+        vol1Title: 'Rotaract Club Bukarest - Mitglied & ehemaliger Präsident',
+        vol1Body: 'Aktives Mitglied von Rotaract, einer globalen, von Rotary unterstützten Service-Organisation. Tätigkeit als Clubpräsident (2016–2017) mit Verantwortung für Führung, Organisation und Umsetzung sozialer Initiativen.',
+        vol2Title: 'Stiftung St. Jakob - Zürich',
+        vol2Body: 'Unterstützung von Projekten zur Schaffung von Arbeits- und Ausbildungsplätzen für Menschen mit Behinderungen in Gastronomie, Handwerk und Gewerbe.',
+        vol3Title: 'CYBATHLON - ETH Zürich',
+        vol3Body: 'Mitwirkung am CYBATHLON, einer internationalen Initiative zur Förderung assistiver Technologien und gesellschaftlicher Inklusion.',
+        vol4Title: 'Bergwaldprojekt - Kanton Graubünden',
+        vol4Body: 'Mitarbeit bei Waldschutz- und Pflegearbeiten, inklusive Bau von Wanderwegen und Schutz junger Bäume vor Lawinen.'
+      }
+    };
+
+    const langToggle = document.getElementById('langToggle');
+
+    function applyLang(lang){
+      const dict = t[lang] || t.en;
+      document.documentElement.lang = (lang === 'de') ? 'de' : 'en';
+
+      for (const [id, value] of Object.entries(dict)){
+        const el = document.getElementById(id);
+        if (!el) continue;
+
+        // hero title handled by typewriter on first load
+        if (id === 'heroTitle'){
+          if (sessionStorage.getItem('heroTyped') === '1') el.innerHTML = value;
+          continue;
+        }
+
+        // allow innerHTML where we intentionally include markup
+        if (id === 'certsFoot'){
+          el.innerHTML = value;
+          continue;
+        }
+
+        el.textContent = value;
+      }
+
+      // update marquee pills
+      document.querySelectorAll('[data-pill]').forEach(p => {
+        const key = p.getAttribute('data-pill');
+        if (dict.pills && dict.pills[key]) p.textContent = dict.pills[key];
+      });
+
+      // verify labels
+      document.querySelectorAll('[data-i18n="verify"]').forEach(a => a.textContent = dict.verifyLabel || 'Verify');
+
+      // renewal notes
+      const sa = document.getElementById('certAzureSA'); if (sa && dict.certAzureSA) sa.textContent = dict.certAzureSA;
+      const de = document.getElementById('certAzureDE'); if (de && dict.certAzureDE) de.textContent = dict.certAzureDE;
+
+      localStorage.setItem('lang', lang);
+
+      const enEl = langToggle?.querySelector('[data-k="en"]');
+      const deEl = langToggle?.querySelector('[data-k="de"]');
+      if (enEl && deEl){
+        enEl.classList.toggle('active', lang === 'en');
+        deEl.classList.toggle('active', lang === 'de');
+      }
+    }
+
+    // --- Simple self-tests (console) ---
+    function runSelfTests(){
+      const required = ['projectsEyebrow','skillsTitle','heroTitle'];
+      for (const k of required){
+        if (!(k in t.en)) throw new Error(`i18n test failed: missing t.en.${k}`);
+        if (!(k in t.de)) throw new Error(`i18n test failed: missing t.de.${k}`);
+      }
+      applyLang('en');
+      applyLang('de');
+      console.log('[OK] i18n self-test passed');
+    }
+
+    const saved = localStorage.getItem('lang');
+
+    try { runSelfTests(); } catch (e) { console.error(e); }
+
+    const initialLang = (saved === 'de') ? 'de' : 'en';
+    applyLang(initialLang);
+
+    // --- Hero typewriter (runs once per session) ---
+    function typeHeroTitle(lang){
+      const h1 = document.getElementById('heroTitle');
+      if (!h1) return;
+      const dict = t[lang] || t.en;
+
+      const partsByLang = {
+        en: [
+          {text:'Building '},
+          {gradient:'production-grade'},
+          {br:true},
+          {text:'data platforms with clarity & speed.'}
+        ],
+        de: [
+          {text:'Ich entwickle '},
+          {gradient:'produktionsreife'},
+          {br:true},
+          {text:'Datenplattformen – klar, robust und skalierbar.'}
+        ]
+      };
+
+      const parts = partsByLang[lang] || partsByLang.en;
+      h1.innerHTML = '';
+
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.textContent = '▍';
+
+      let gradientSpan = null;
+
+      function ensureCaret(){
+        if (caret.parentNode) caret.parentNode.removeChild(caret);
+        h1.appendChild(caret);
+      }
+      ensureCaret();
+
+      const queue = [];
+      for (const p of parts){
+        if (p.br) queue.push({type:'br'});
+        else if (p.gradient) queue.push({type:'gradient', value:p.gradient});
+        else queue.push({type:'text', value:p.text || ''});
+      }
+
+      let qi = 0;
+      let ci = 0;
+
+      function step(){
+        const item = queue[qi];
+        if (!item){
+          if (caret.parentNode) caret.parentNode.removeChild(caret);
+          sessionStorage.setItem('heroTyped', '1');
+          h1.innerHTML = dict.heroTitle;
+          return;
+        }
+
+        if (item.type === 'br'){
+          h1.insertBefore(document.createElement('br'), caret);
+          qi++; ci = 0;
+          setTimeout(step, 120);
+          return;
+        }
+
+        let target = h1;
+        if (item.type === 'gradient'){
+          if (!gradientSpan){
+            gradientSpan = document.createElement('span');
+            gradientSpan.className = 'gradient';
+            h1.insertBefore(gradientSpan, caret);
+          }
+          target = gradientSpan;
+        } else {
+          gradientSpan = null;
+          target = h1;
+        }
+
+        const text = item.value;
+        if (ci < text.length){
+          const ch = text.charAt(ci);
+          if (target === h1) h1.insertBefore(document.createTextNode(ch), caret);
+          else target.appendChild(document.createTextNode(ch));
+          ci++;
+          const base = 22;
+          const jitter = Math.random() * 18;
+          setTimeout(step, base + jitter);
+          return;
+        }
+
+        qi++; ci = 0;
+        setTimeout(step, 80);
+      }
+
+      setTimeout(step, 350);
+    }
+
+    if (sessionStorage.getItem('heroTyped') !== '1'){
+      typeHeroTitle(initialLang);
+    }
+
+    if (langToggle){
+      langToggle.addEventListener('click', () => {
+        const current = localStorage.getItem('lang') === 'de' ? 'de' : 'en';
+        applyLang(current === 'de' ? 'en' : 'de');
+      });
+    }
+  </script>
+</body>
+</html>
