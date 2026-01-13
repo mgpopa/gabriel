@@ -88,8 +88,11 @@
 
     /* single-button language toggle: shows EN/DE, highlights active */
     .lang-toggle{gap:8px; padding:11px 16px;pointer-events:auto;cursor:pointer;touch-action:manipulation;position:relative;z-index:2000;}
-    .lang-toggle .lg{font-weight:900; letter-spacing:.06em; opacity:.55;}
+    .lang-toggle .lg{font-weight:900; letter-spacing:.06em; opacity:.45;}
     .lang-toggle .lg.active{opacity:1;}
+    /* Robust active state (helps if class toggling is overridden) */
+    .lang-toggle[data-lang="en"] [data-k="en"],
+    .lang-toggle[data-lang="de"] [data-k="de"]{opacity:1;}
     .lang-toggle .sep{width:1px;height:18px;background:var(--line2);opacity:.7;}
 
     /* layout primitives */
@@ -203,7 +206,7 @@
         <a href="#certifications" id="navCerts">Certifications</a>
       </nav>
       <div class="cta">
-        <button class="btn primary lang-toggle" id="langToggle" type="button" aria-label="Switch language">
+        <button class="btn primary lang-toggle" id="langToggle" type="button" aria-label="Switch language" onclick="window.__toggleLang && window.__toggleLang()">
           <span class="lg" data-k="en">EN</span>
           <span class="sep" aria-hidden="true"></span>
           <span class="lg" data-k="de">DE</span>
@@ -967,6 +970,11 @@
     const langToggle = document.getElementById('langToggle');
 
     function applyLang(lang){
+      // reflect current language on the toggle (CSS + accessibility)
+      if (langToggle){
+        langToggle.setAttribute('data-lang', lang);
+        langToggle.setAttribute('aria-pressed', lang === 'de' ? 'true' : 'false');
+      }
       const dict = t[lang] || t.en;
       document.documentElement.lang = (lang === 'de') ? 'de' : 'en';
 
@@ -1147,6 +1155,10 @@
         }
       };
 
+      // Expose a global handler as a last-resort fallback (some GH Pages/mobile edge cases)
+      window.__toggleLang = toggleLang;
+
+      // Primary handlers
       langToggle.addEventListener('click', (e) => {
         e.preventDefault();
         toggleLang();
@@ -1158,6 +1170,14 @@
           toggleLang();
         }
       });
+
+      // Capture-phase delegation fallback (helps if something swallows the bubbling click)
+      document.addEventListener('click', (e) => {
+        const btn = e.target && e.target.closest ? e.target.closest('#langToggle') : null;
+        if (!btn) return;
+        e.preventDefault();
+        toggleLang();
+      }, true);
     }
   </script>
 </body>
