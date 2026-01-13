@@ -172,9 +172,10 @@
       .cert-year{font-size:.9rem}
     }
 
-    /* reveal */
-    .reveal{opacity:0; transform: translateY(10px); transition: opacity .7s ease, transform .7s ease}
-    .reveal.visible{opacity:1; transform: translateY(0)}
+    /* reveal (safe by default: content is visible even if JS fails) */
+    .reveal{opacity:1; transform:none}
+    html.js .reveal{opacity:0; transform: translateY(10px); transition: opacity .7s ease, transform .7s ease}
+    html.js .reveal.visible{opacity:1; transform: translateY(0)}
 
     /* top accent line */
     .scanline{position:absolute; left:0; right:0; top:0; height:2px;background: linear-gradient(90deg, transparent, rgba(139,92,246,.9), rgba(34,197,94,.7), transparent);opacity:.65;filter: blur(.2px);}
@@ -580,12 +581,26 @@
   </main>
 
   <script>
+    // Mark JS as enabled (so reveal animations only apply when JS actually runs)
+    document.documentElement.classList.add('js');
+
     // reveal on scroll
     const els = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries)=>{
-      for (const e of entries) if (e.isIntersecting) e.target.classList.add('visible');
-    }, {threshold: 0.08});
-    els.forEach(el => io.observe(el));
+
+    // If IntersectionObserver isn't available, just show everything.
+    if (!('IntersectionObserver' in window)){
+      els.forEach(el => el.classList.add('visible'));
+    } else {
+      const io = new IntersectionObserver((entries)=>{
+        for (const e of entries) if (e.isIntersecting) e.target.classList.add('visible');
+      }, {threshold: 0.08});
+      els.forEach(el => io.observe(el));
+    }
+
+    // Always make hero visible immediately (prevents blank page on edge cases)
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
+    });
 
     // marquee: finite list, infinite loop with reset
     const marquee = document.querySelector('.marquee');
@@ -601,60 +616,62 @@
 
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
-    marquee.addEventListener('mouseenter', () => paused = true);
-    marquee.addEventListener('mouseleave', () => { if(!dragging) paused = false; });
+    if (marquee && track){
+      marquee.addEventListener('mouseenter', () => paused = true);
+      marquee.addEventListener('mouseleave', () => { if(!dragging) paused = false; });
 
-    marquee.addEventListener('pointerdown', (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      dragging = true;
-      paused = true;
-      marquee.classList.add('dragging');
-      marquee.setPointerCapture?.(e.pointerId);
-      dragStartX = e.clientX;
-      dragStartOffset = x;
-      e.preventDefault();
-    });
+      marquee.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true;
+        paused = true;
+        marquee.classList.add('dragging');
+        marquee.setPointerCapture?.(e.pointerId);
+        dragStartX = e.clientX;
+        dragStartOffset = x;
+        e.preventDefault();
+      });
 
-    marquee.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const end = track.scrollWidth - marquee.clientWidth;
-      if (end <= 0) return;
-      const dx = e.clientX - dragStartX;
-      const next = dragStartOffset + dx;
-      x = clamp(next, -end, 0);
-      track.style.transform = `translateX(${x}px)`;
-      e.preventDefault();
-    });
-
-    function stopDrag(e){
-      if (!dragging) return;
-      dragging = false;
-      marquee.classList.remove('dragging');
-      const r = marquee.getBoundingClientRect();
-      const inside = (e && 'clientX' in e)
-        ? (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom)
-        : false;
-      if (!inside) paused = false;
-    }
-
-    marquee.addEventListener('pointerup', stopDrag);
-    marquee.addEventListener('pointercancel', stopDrag);
-    marquee.addEventListener('pointerleave', (e) => { if (dragging) stopDrag(e); });
-
-    function animate(){
-      if(!paused){
+      marquee.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
         const end = track.scrollWidth - marquee.clientWidth;
-        if (end > 0){
-          x -= speed;
-          if (Math.abs(x) >= end) x = 0;
-          track.style.transform = `translateX(${x}px)`;
-        } else {
-          track.style.transform = `translateX(0px)`;
-        }
+        if (end <= 0) return;
+        const dx = e.clientX - dragStartX;
+        const next = dragStartOffset + dx;
+        x = clamp(next, -end, 0);
+        track.style.transform = `translateX(${x}px)`;
+        e.preventDefault();
+      });
+
+      function stopDrag(e){
+        if (!dragging) return;
+        dragging = false;
+        marquee.classList.remove('dragging');
+        const r = marquee.getBoundingClientRect();
+        const inside = (e && 'clientX' in e)
+          ? (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom)
+          : false;
+        if (!inside) paused = false;
       }
-      requestAnimationFrame(animate);
+
+      marquee.addEventListener('pointerup', stopDrag);
+      marquee.addEventListener('pointercancel', stopDrag);
+      marquee.addEventListener('pointerleave', (e) => { if (dragging) stopDrag(e); });
+
+      function animate(){
+        if(!paused){
+          const end = track.scrollWidth - marquee.clientWidth;
+          if (end > 0){
+            x -= speed;
+            if (Math.abs(x) >= end) x = 0;
+            track.style.transform = `translateX(${x}px)`;
+          } else {
+            track.style.transform = `translateX(0px)`;
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
     }
-    animate();
 
     // --- Language toggle (EN/DE) ---
     const t = {
