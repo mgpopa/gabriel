@@ -369,7 +369,7 @@
             </p>
             <ul>
               <li id="p0Li1">Partnered with Business Units and Group Functions to capture requirements and define a shared planning model</li>
-              <li id="p0Li2">Enabled scenario‑based planning and skills gap insights to support strategic talent decisions</li>
+              <li id="p0Li2">Enabled scenario-based planning and skills gap insights to support strategic talent decisions</li>
               <li id="p0Li3">Delivered executive-ready analytics to improve planning consistency and decision speed across the organisation</li>
             </ul>
             <div class="tags">
@@ -381,6 +381,34 @@
               <span>Vega Charts</span>
             </div>
             <p class="cert-meta" style="margin-top:12px" id="p0Note">Proprietary internal platform - no public repository available.</p>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project-top">
+              <h3 style="margin:0" id="p1Title">Actuarial Reserving Playground</h3>
+              <span class="badge" id="p1Badge">Personal</span>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="p1Body">
+              A personal project exploring how classical actuarial reserving methods can be made interactive and understandable through visualisation a simple web application.
+              This project demonstrates how core reserving techniques, such as Chain Ladder, Mack uncertainty, and Bootstrap simulation, can be explored visually using real claims triangles. The goal is to make traditionally opaque actuarial concepts easier to inspect, stress-test and explain.
+            </p>
+            <ul>
+              <li id="p1Li1">Visualizes claims development triangles and how losses evolve over time</li>
+              <li id="p1Li2">Implements classical reserving methods used in practice (Chain Ladder, Mack, Bootstrap)</li>
+              <li id="p1Li3">Shows how uncertainty grows for immature accidents years and long-tailed lines</li>
+              <li id="p1Li4">Allows scenario testing to explore how assumptions like inflation or tail factors affect reserves</li>
+            </ul>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+              <a class="btn" href="https://github.com/mgpopa/reserving-lab" id="p1Repo">Repo</a>
+              <a class="btn" href="https://reserving-lab.streamlit.app/" id="p1Repo">Application</a>
+              <a class="btn" href="https://medium.com/@gabriel.io/actuarial-reserving-in-practice-chain-ladder-mack-bootstrap-w-an-app-3af04ce49ca6" id="p1Writeup">Write-up</a>
+            </div>
+            <div class="tags">
+              <span>Python</span>
+              <span>Actuarial Science</span>
+              <span>Reserving</span>
+              <span>Streamlit</span>
+            </div>
           </article>
 
           <article class="card project reveal">
@@ -409,7 +437,7 @@
 
           <article class="card project reveal">
             <div class="project-top">
-              <h3 style="margin:0" id="pXTitle">PII‑Safe Semantic Search for Insurance Claims</h3>
+              <h3 style="margin:0" id="pXTitle">PII-Safe Semantic Search for Insurance Claims</h3>
               <span class="badge" id="pXBadge">Personal</span>
             </div>
             <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="pXBody">
@@ -418,8 +446,8 @@
             <ul>
               <li id="pXLi1">Unlocks semantic search on sensitive text while keeping PII out of vector stores</li>
               <li id="pXLi2">Reduces compliance risk by separating masked embeddings from governed raw text</li>
-              <li id="pXLi3">Improves analyst productivity by enabling meaning‑based search instead of exact keywords</li>
-              <li id="pXLi4">De‑risks vendor exposure by keeping vectors local and reusing existing governed data stores</li>
+              <li id="pXLi3">Improves analyst productivity by enabling meaning-based search instead of exact keywords</li>
+              <li id="pXLi4">De-risks vendor exposure by keeping vectors local and reusing existing governed data stores</li>
             </ul>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
               <a class="btn" href="https://github.com/mgpopa/pii-safe-claims-rag" target="_blank" rel="noopener" id="pXRepo">GitHub</a>
@@ -440,11 +468,11 @@
               <span class="badge" id="pITDWHBadge">Enterprise</span>
             </div>
             <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="pITDWHBody">
-              Led the decommissioning of the legacy ITDWH platform and transition of private, public, and on‑prem consumption sources to Microsoft Azure and Palantir Foundry.
+              Led the decommissioning of the legacy ITDWH platform and transition of private, public, and on-prem consumption sources to Microsoft Azure and Palantir Foundry.
             </p>
             <ul>
-              <li id="pITDWHLi1">Migrated 200+ customer‑facing interfaces to Palantir Foundry, including value services and distribution logic</li>
-              <li id="pITDWHLi2">Transitioned diverse data sources (Oracle, Postgres, DB2 Mainframe, CSV, SharePoint, Pull‑printing) to Azure‑based consumption</li>
+              <li id="pITDWHLi1">Migrated 200+ customer-facing interfaces to Palantir Foundry, including value services and distribution logic</li>
+              <li id="pITDWHLi2">Transitioned diverse data sources (Oracle, Postgres, DB2 Mainframe, CSV, SharePoint, Pull-printing) to Azure‑based consumption</li>
               <li id="pITDWHLi3">Delivered an estimated cost saving of ~$120k per month through decommissioning and platform consolidation</li>
               <li id="pITDWHLi4">Implemented health checks across Microsoft Azure and Palantir Foundry to ensure operational stability</li>
             </ul>
@@ -456,25 +484,6 @@
               <span>SQL Server</span>
             </div>
             <p class="cert-meta" style="margin-top:12px" id="pITDWHNote">Proprietary internal platform - no public repository available.</p>
-          </article>
-
-          <article class="card project reveal">
-            <div class="project-top">
-              <h3 style="margin:0" id="p1Title">Lakehouse Pipeline with Quality Gates</h3>
-              <span class="badge" id="p1Badge">Featured</span>
-            </div>
-            <p style="margin:8px 0 0;color:var(--muted);line-height:1.7" id="p1Body">
-              Ingestion → transformations → curated marts with tests, freshness checks, and deploy-time validation.
-            </p>
-            <ul>
-              <li id="p1Li1">Contract checks block deploy on breaking schema or quality failures</li>
-              <li id="p1Li2">Latency and volume anomaly monitoring with actionable alerts</li>
-              <li id="p1Li3">Reproducible dev env with Docker + documented runbook</li>
-            </ul>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-              <a class="btn" href="#" id="p1Repo">Repo</a>
-              <a class="btn" href="#" id="p1Writeup">Write-up</a>
-            </div>
           </article>
 
           <article class="card project reveal">
@@ -875,6 +884,17 @@
         p0Li2: 'Szenariobasierte Planung und Skill-Gap-Analysen als Grundlage für strategische Talententscheidungen',
         p0Li3: 'Executive-taugliche Analysen zur Verbesserung von Konsistenz und Geschwindigkeit in der Planung über die Organisation hinweg',
         p0Note: 'Unternehmensinterne Plattform - kein öffentliches Repository verfügbar.',
+
+        p1Title: 'Actuarial Reserving Playground',
+        p1Badge: 'Persönlich',
+        p1Body: ```Ein persönliches Projekt, das untersucht, wie klassische versicherungsmathematische Reservierungsmethoden durch eine einfache Web-App interaktiv und verständlicher gemacht werden können.
+        Dieses Projekt zeigt, wie zentrale Methoden der Schadenreservierung - Chain Ladder, Mack-Unsicherheitsmodell und Bootstrap-Simulation - anhand realer Schadenentwicklungsdreiecke visuell analysiert werden können. Ziel ist es, traditionell schwer zugängliche aktuariellen Konzepte transparenter zu machen und ihre Auswirkungen nachvollziehbar darzustellen.```,
+        p1Li1: 'Visualisiert Schadenentwicklungsdreiecke und zeigt, wie sich Schäden über die Zeit entwickeln',
+        p1Li2: 'Implementiert klassische Reservierungsmethoden aus der Praxis (Chain Ladder, Mack, Bootstrap)',
+        p1Li3: 'Veranschaulicht, wie Unsicherheit bei jungen Schadenjahren und langlaufenden Sparten zunimmt',
+        p1Li4: 'Ermöglicht Szenarioanalysen, um zu untersuchen, wie Annahmen wie Inflation oder Tail-Faktoren die Reserve beeinflussen',
+        p1Repo: 'GitHub',
+        p1Article: 'Artikel',
 
         pPCPTitle: 'People- & Cost-Planning-Plattform',
         pPCPBadge: 'Enterprise',
