@@ -123,8 +123,8 @@
 
         panelBadge: 'At a glance',
         panelTitle: 'End-to-end product engineering',
-        panelLead: 'I operate as an all‑rounder across the full product lifecycle - from idea generation and problem discovery to design, prototyping, and production delivery. I'm a hands-on engineer who translates business intent into robust, scalable systems.',
-        panelLi1: 'Identify the true constraint limiting a partner's mission',
+        panelLead: 'I operate as an all-rounder across the full product lifecycle - from idea generation and problem discovery to design, prototyping, and production delivery. I\'m a hands-on engineer who translates business intent into robust, scalable systems.',
+        panelLi1: 'Identify the true constraint limiting a partner\'s mission',
         panelLi2: 'Decompose complex problems into clear workflows and decisions',
         panelLi3: 'Align business stakeholders around a shared solution direction',
         panelLi4: 'Solve backwards from real user workflows',
@@ -212,8 +212,8 @@
         certsFoot: 'Full list available on <a href="https://www.linkedin.com/in/p-gabriel" target="_blank" rel="noopener">LinkedIn</a>.',
 
         contactEyebrow: 'Contact',
-        contactTitle: 'Let's talk',
-        contactLead: 'Replace the email below with your real address when you're ready.',
+        contactTitle: 'Let\'s talk',
+        contactLead: 'Replace the email below with your real address when you\'re ready.',
         contactEmail: 'Email',
         contactLinkedIn: 'LinkedIn',
         contactGitHub: 'GitHub',
