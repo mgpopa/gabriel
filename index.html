@@ -232,7 +232,7 @@
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
             <a class="btn primary" href="#projects" id="heroBtnProjects">Explore Work</a>
             <a class="btn primary" href="#skills" id="heroBtnSkills">Capabilities</a>
-            <a class="btn primary" href="./assets/Gabriel_Popa_CV.pdf" target="_blank" rel="noopener" id="heroBtnCV">Download CV (PDF)</a>
+            <a class="btn primary" href="./assets/Gabriel_Popa_CV_EN.pdf" target="_blank" rel="noopener" id="heroBtnCV">Download CV (PDF)</a>
           </div>
 
           <div class="marquee" aria-label="Tech stack marquee">
@@ -517,7 +517,7 @@
 
         <div style="margin-top:28px;max-width:900px" class="reveal">
           <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Proofpoint Certified AI Data Security Specialist</div><a class="cert-verify" href="https://www.credly.com/badges/920fc6e8-4a2c-4064-a900-76b878df1c64/public_url" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certAISec">Advanced proficiency in identifying and neutralizing GenAI-specific data threats, ensuring that AI integration remains compliant, secure, and resilient against emerging vulnerabilities.</div></div></div>
-          <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Aware</div><a class="cert-verify" href="https://verify.skilljar.com/c/qsqymtssnuh7" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certPalantirAware"> Expertise in architecting end-to-end Foundry solutions, from complex data integration and governance to the deployment of operational business applications.</div></div></div>
+          <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Aware</div><a class="cert-verify" href="https://verify.skilljar.com/c/qsqymtssnuh7" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certPalantirAware"> Expertise in orchestrating end-to-end Foundry solutions, from complex data integration and governance to the deployment of operational business applications.</div></div></div>
           <div class="cert-item"><div class="cert-year">2025</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Application Developer Professional</div><a class="cert-verify" href="https://verify.skilljar.com/c/7umzdtziharh" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certPalantirDev">Expertise in architecting high-performance Palantir Foundry Ontologies and building mission-critical operational applications that translate complex data into actionable business interfaces.</div></div></div>
           <div class="cert-item"><div class="cert-year">2024-2026</div><div><div class="cert-title-row"><div class="cert-title">Microsoft Certified: Fabric Analytics Engineer Associate</div><a class="cert-verify" href="https://learn.microsoft.com/api/credentials/share/de-de/Gabriel-6596/7CEE8D6F7B2D4942?sharingId=30CD7BEF61A84C0B" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certAzureFabric">Renewed annually through 2026.</div></div></div>
           <div class="cert-item"><div class="cert-year">2024</div><div><div class="cert-title-row"><div class="cert-title">Palantir Foundry Data Engineer Professional</div><a class="cert-verify" href="https://verify.skilljar.com/c/rscj2fzo6cqa" target="_blank" rel="noopener" data-i18n="verify">Verify</a></div><div class="cert-meta" id="certPalantirDataEng">Expertise in architecting and maintaining production-grade data pipelines within Palantir Foundry, ensuring high data integrity through rigorous validation and industry-standard engineering best practices.</div></div></div>
@@ -1006,6 +1006,14 @@
       // renewal notes
       const sa = document.getElementById('certAzureSA'); if (sa && dict.certAzureSA) sa.textContent = dict.certAzureSA;
       const deEl = document.getElementById('certAzureDE'); if (deEl && dict.certAzureDE) deEl.textContent = dict.certAzureDE;
+
+      // language-specific CV download link
+      const cvLink = document.getElementById('heroBtnCV');
+      if (cvLink){
+        cvLink.href = (lang === 'de')
+          ? './assets/Gabriel_Popa_CV_DE.pdf'
+          : './assets/Gabriel_Popa_CV_EN.pdf';
+      }
 
       localStorage.setItem('lang', lang);
 

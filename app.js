@@ -419,6 +419,14 @@
       const sa = document.getElementById('certAzureSA'); if (sa && dict.certAzureSA) sa.textContent = dict.certAzureSA;
       const deEl = document.getElementById('certAzureDE'); if (deEl && dict.certAzureDE) deEl.textContent = dict.certAzureDE;
 
+      // language-specific CV download link
+      const cvLink = document.getElementById('heroBtnCV');
+      if (cvLink){
+        cvLink.href = (lang === 'de')
+          ? './assets/Gabriel_Popa_CV_DE.pdf'
+          : './assets/Gabriel_Popa_CV_EN.pdf';
+      }
+
       localStorage.setItem('lang', lang);
 
       const enChip = langToggle?.querySelector('[data-k="en"]');
