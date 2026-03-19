@@ -834,9 +834,9 @@
         navCerts: 'Zertifizierungen',
         hdrContact: 'Kontakt',
 
-        heroEyebrow: 'Data Engineer • Zürich',
+        heroEyebrow: 'Data Engineer & IT Owner • Zürich',
         heroTitle: 'Architektur <span class="gradient">produktionsreifer</span><br/>Datenplattformen – klar, robust und skalierbar.',
-        heroLead: 'Ich übersetze komplexe fachliche Anforderungen in zuverlässige, skalierbare Datenplattformen und verbinde dabei Architektur, Engineering-Exzellenz und operative Stabilität.',
+        heroLead: 'Ich übersetze komplexe Anforderungen in zuverlässige, skalierbare Datenplattformen und verbinde dabei Architektur, Engineering-Exzellenz und operative Stabilität.',
         heroBtnProjects: 'Projekte ansehen',
         heroBtnSkills: 'Kompetenzen',
         heroBtnCV: 'Lebenslauf (PDF)',
@@ -979,9 +979,9 @@
         const el = document.getElementById(id);
         if (!el) continue;
 
-        // hero title handled by typewriter on first load
+        // hero title contains markup (gradient span + <br/>). Always update on language switch.
         if (id === 'heroTitle'){
-          if (sessionStorage.getItem('heroTyped') === '1') el.innerHTML = value;
+          el.innerHTML = value;
           continue;
         }
 
