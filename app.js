@@ -98,7 +98,7 @@
         hdrContact: 'Contact',
 
         heroEyebrow: 'Data Engineer • Zurich',
-        heroTitle: 'Building <span class="gradient">production-grade</span><br/>data platforms with clarity &amp; speed.',
+        heroTitle: 'Architecting <span class="gradient">production-grade</span><br/>data platforms with clarity &amp; speed.',
         heroLead: 'I design reliable pipelines, data models, and platform components with a focus on automation, observability, and secure delivery.',
         heroBtnProjects: 'View Projects',
         heroBtnSkills: 'See Skills',
@@ -463,7 +463,7 @@
 
       const partsByLang = {
         en: [
-          {text:'Building '},
+          {text:'Architecting '},
           {gradient:'production-grade'},
           {br:true},
           {text:'data platforms with clarity & speed.'}
