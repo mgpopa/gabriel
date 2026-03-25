@@ -602,9 +602,7 @@
       <div class="container" id="footerText">© 2026 Gabriel Popa - Portfolio Preview</div>
     </footer>
   </main>
-  <!-- GitHub Pages note: If your site has a Content Security Policy that blocks inline scripts,
-       include app.js (external) with the same JS as below. The external file will run even if inline is blocked. -->
-  <script src="./app.js" defer></script>
+
 
   <script id="inlineApp">
     // Mark JS as enabled (so reveal animations only apply when JS actually runs)
@@ -696,6 +694,92 @@
       }
       animate();
     }
+
+    // --- Hero typewriter animation (runs once per session) ---
+    const typeHeroTitle = (lang) => {
+      const h1 = document.getElementById('heroTitle');
+      if (!h1) return;
+      
+      const partsByLang = {
+        en: [
+          {text:'Architecting '},
+          {gradient:'production-grade'},
+          {br:true},
+          {text:'data platforms with clarity & speed.'}
+        ],
+        de: [
+          {text:'Architektur '},
+          {gradient:'produktionsreifer'},
+          {br:true},
+          {text:'Datenplattformen – klar, robust und skalierbar.'}
+        ]
+      };
+
+      const parts = partsByLang[lang] || partsByLang.en;
+      h1.innerHTML = '';
+
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.textContent = '▍';
+      h1.appendChild(caret);
+
+      let gradientSpan = null;
+      const queue = [];
+      
+      for (const p of parts){
+        if (p.br) queue.push({type:'br'});
+        else if (p.gradient) queue.push({type:'gradient', value:p.gradient});
+        else queue.push({type:'text', value:p.text || ''});
+      }
+
+      let qi = 0, ci = 0;
+
+      const step = () => {
+        const item = queue[qi];
+        if (!item){
+          if (caret.parentNode) caret.parentNode.removeChild(caret);
+          sessionStorage.setItem('heroTyped', '1');
+          const dict = t[lang] || t.en;
+          h1.innerHTML = dict.heroTitle;
+          return;
+        }
+
+        if (item.type === 'br'){
+          h1.insertBefore(document.createElement('br'), caret);
+          qi++; ci = 0;
+          setTimeout(step, 120);
+          return;
+        }
+
+        let target = h1;
+        if (item.type === 'gradient'){
+          if (!gradientSpan){
+            gradientSpan = document.createElement('span');
+            gradientSpan.className = 'gradient';
+            h1.insertBefore(gradientSpan, caret);
+          }
+          target = gradientSpan;
+        } else {
+          gradientSpan = null;
+        }
+
+        const text = item.value;
+        if (ci < text.length){
+          const ch = text.charAt(ci);
+          if (target === h1) h1.insertBefore(document.createTextNode(ch), caret);
+          else target.appendChild(document.createTextNode(ch));
+          ci++;
+          const base = 22, jitter = Math.random() * 18;
+          setTimeout(step, base + jitter);
+          return;
+        }
+
+        qi++; ci = 0;
+        setTimeout(step, 80);
+      };
+
+      setTimeout(step, 350);
+    };
 
     // --- Language toggle (EN/DE) ---
     const t = {
@@ -1056,6 +1140,11 @@
     const saved = localStorage.getItem('lang');
     const initialLang = (saved === 'de') ? 'de' : 'en';
     applyLang(initialLang);
+
+    // trigger typewriter once per session
+    if (sessionStorage.getItem('heroTyped') !== '1'){
+      typeHeroTitle(initialLang);
+    }
 
     // --- Wire up the language toggle ---
     let lastToggleAt = 0;
