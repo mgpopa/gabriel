@@ -1141,10 +1141,8 @@
     const initialLang = (saved === 'de') ? 'de' : 'en';
     applyLang(initialLang);
 
-    // trigger typewriter once per session
-    if (sessionStorage.getItem('heroTyped') !== '1'){
-      typeHeroTitle(initialLang);
-    }
+    // trigger typewriter on every page load
+    typeHeroTitle(initialLang);
 
     // --- Wire up the language toggle ---
     let lastToggleAt = 0;
@@ -1155,6 +1153,7 @@
       const current = (localStorage.getItem('lang') === 'de') ? 'de' : 'en';
       const next = (current === 'de') ? 'en' : 'de';
       applyLang(next);
+      typeHeroTitle(next);
     };
 
     // expose globally for inline onclick
