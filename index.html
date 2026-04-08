@@ -6,7 +6,7 @@
   <title>Gabriel Popa - Data Engineer</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
   <style>
-    /* Palantir-esque: stark, editorial, grid + glow accents (inspired, not copied) */
+    /* setting up the style variables */
     :root{
       --bg:#07090f;
       --panel:rgba(255,255,255,.03);
@@ -90,7 +90,7 @@
     .lang-toggle{gap:8px; padding:11px 16px;pointer-events:auto;cursor:pointer;touch-action:manipulation;position:relative;z-index:2000;}
     .lang-toggle .lg{font-weight:900; letter-spacing:.06em; opacity:.45;}
     .lang-toggle .lg.active{opacity:1;}
-    /* Robust active state (helps if class toggling is overridden) */
+    /* Robust active state it helps if class toggling is overriddenn */
     .lang-toggle[data-lang="en"] [data-k="en"],
     .lang-toggle[data-lang="de"] [data-k="de"]{opacity:1;}
     .lang-toggle .sep{width:1px;height:18px;background:var(--line2);opacity:.7;}
@@ -121,7 +121,7 @@
     .lead{color:var(--muted);font-size:1.06rem;line-height:1.7;max-width:720px;margin:0 0 18px}
     .gradient{background:linear-gradient(135deg, var(--accent), var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
 
-    /* Palantir-ish grid backdrop */
+    /* grid backdrop */
     .gridlines{
       position:absolute; inset:-1px 0 auto 0;
       height:520px;
@@ -695,7 +695,7 @@
       animate();
     }
 
-    // --- Hero typewriter animation (runs once per session) ---
+    //  Hero typewriter animation (runs once per session)
     const typeHeroTitle = (lang) => {
       const h1 = document.getElementById('heroTitle');
       if (!h1) return;
@@ -781,7 +781,7 @@
       setTimeout(step, 350);
     };
 
-    // --- Language toggle (EN/DE) ---
+    // Language toggle (EN/DE)
     const t = {
       en: {
         navAbout: 'About',
@@ -1090,13 +1090,13 @@
         const el = document.getElementById(id);
         if (!el) continue;
 
-        // hero title contains markup (gradient span + <br/>). Always update on language switch.
+        // hero title contains markup (gradient span + <br/>). always update on language switch
         if (id === 'heroTitle'){
           el.innerHTML = value;
           continue;
         }
 
-        // allow innerHTML where we intentionally include markup
+        // allow innerHTML where i intentionally include markup
         if (id === 'certsFoot'){
           el.innerHTML = value;
           continue;
@@ -1144,7 +1144,7 @@
     // trigger typewriter on every page load
     typeHeroTitle(initialLang);
 
-    // --- Wire up the language toggle ---
+    // Wire up the language toggle
     let lastToggleAt = 0;
     const toggleLang = () => {
       const now = Date.now();

@@ -553,7 +553,7 @@
       typeHeroTitle(initialLang);
     }
 
-    // --- Wire up the language toggle (GitHub Pages safe) ---
+    // Wire up the language toggle / GitHub Pages safe
     if (langToggle){
       let lastToggleAt = 0;
       const toggleLang = () => {
